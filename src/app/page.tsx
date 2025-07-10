@@ -49,6 +49,7 @@ export default function Home() {
               console.log('AUTH RESPONSE:', res.status, data);
               if (res.ok) {
                 localStorage.setItem('tgUser', JSON.stringify(fullUser));
+                document.cookie = `telegram_id=${user.id}; path=/; max-age=2592000`;
                 window.open('/dashboard', '_self');
               } else {
                 alert('Ошибка авторизации через Telegram: ' + (data.error || res.status));
