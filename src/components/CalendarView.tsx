@@ -67,7 +67,14 @@ export default function CalendarView() {
     if (!title.trim() || !date) return;
     setEvents(prev => [
       ...prev,
-      { id: `event_${Date.now()}`, title, description: desc, date }
+      {
+        id: `event_${Date.now()}`,
+        title,
+        description: desc,
+        date,
+        time: '', // TODO: set actual time if available
+        duration_minutes: 0 // TODO: set actual duration if available
+      }
     ]);
     setTitle(""); setDesc(""); setDate("");
   };
@@ -112,7 +119,7 @@ export default function CalendarView() {
         {events.map(ev => (
           <li key={ev.id} className="flex items-center justify-between mb-1 bg-card px-2 py-1 rounded-neumorph">
             <div>
-              <b>{ev.title}</b> — {ev.description}
+              <b>{ev.title}</b>
               <span className="ml-2 text-xs text-accent">{ev.date}</span>
             </div>
             <button

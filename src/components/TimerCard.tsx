@@ -88,7 +88,17 @@ export default function TimerCard() {
     const start = startTime ?? end;
     const duration = end - start;
     setElapsed(duration);
-    setSessions((prev) => [...prev, { start, end, duration }]);
+    setSessions((prev) => [
+      ...prev,
+      {
+        id: `session_${Date.now()}`,
+        category: "default", // TODO: set actual category if available
+        description: "", // TODO: set actual description if available
+        start_time: new Date(start).toISOString(),
+        end_time: new Date(end).toISOString(),
+        duration_minutes: Math.round(duration / 60000)
+      }
+    ]);
     setStartTime(null);
   };
 
@@ -128,7 +138,7 @@ export default function TimerCard() {
         <ul className="text-xs max-h-32 overflow-y-auto">
           {sessions.map((s, i) => (
             <li key={i}>
-              {new Date(s.start).toLocaleTimeString()} — {new Date(s.end).toLocaleTimeString()} | {format(s.duration)}
+              {new Date(s.start_time).toLocaleTimeString()} — {new Date(s.end_time).toLocaleTimeString()} | {format(s.duration_minutes * 60000)}
             </li>
           ))}
         </ul>

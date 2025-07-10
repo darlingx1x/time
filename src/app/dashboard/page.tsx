@@ -1,3 +1,5 @@
+"use client";
+import React from "react";
 import { useState } from "react";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
