@@ -1,0 +1,18 @@
+# Node
+node_modules
+.next
+out
+.env
+.env.*
+.DS_Store
+*.log
+coverage
+# Local env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# VSCode
+.vscode
+# OS
+Thumbs.db

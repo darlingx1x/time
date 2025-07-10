@@ -1,14 +1,75 @@
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import type { TimeSession, UserData } from "@/types/userData";
 
 export default function TimerCard() {
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [sessions, setSessions] = useState<{start: number; end: number; duration: number}[]>([]);
+  const [sessions, setSessions] = useState<TimeSession[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const shaRef = useRef<string | undefined>(undefined);
+  const telegramIdRef = useRef<string | null>(null);
+
+  // Загрузка сессий из GitHub
+  useEffect(() => {
+    const fetchSessions = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const tgUser = typeof window !== "undefined" ? localStorage.getItem("tgUser") : null;
+        if (!tgUser) throw new Error("Пользователь не найден");
+        const { id } = JSON.parse(tgUser);
+        telegramIdRef.current = id;
+        const res = await fetch(`/api/data?telegram_id=${id}`);
+        const json = await res.json();
+        if (json.data) {
+          let parsed: UserData;
+          if (typeof json.data === "string") {
+            parsed = JSON.parse(json.data);
+          } else {
+            parsed = json.data;
+          }
+          setSessions(parsed.time_sessions || []);
+          shaRef.current = json.data?.sha || undefined;
+        } else {
+          setSessions([]);
+        }
+      } catch (e: any) {
+        setError(e.message || "Ошибка загрузки");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSessions();
+  }, []);
+
+  // Автосохранение сессий в GitHub при изменении
+  useEffect(() => {
+    if (loading) return;
+    if (!telegramIdRef.current) return;
+    const saveSessions = async () => {
+      setSaving(true);
+      setError(null);
+      try {
+        const userData: Partial<UserData> = { time_sessions: sessions };
+        await fetch("/api/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ telegram_id: telegramIdRef.current, userData, sha: shaRef.current }),
+        });
+      } catch (e: any) {
+        setError(e.message || "Ошибка сохранения");
+      } finally {
+        setSaving(false);
+      }
+    };
+    saveSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessions]);
 
   const startTimer = () => {
     if (running) return;

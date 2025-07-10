@@ -1,55 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import type { Todo } from "@/types/userData";
+import type { Todo, UserData } from "@/types/userData";
 
-const defaultTodos: Todo[] = [
-  {
-    id: "todo_001",
-    title: "Завершить MVP",
-    description: "Функция авторизации и сохранения задач",
-    deadline: "2025-07-15",
-    status: "in_progress",
-    tags: ["разработка", "приоритет"],
-  },
-];
+const defaultTodos: Todo[] = [];
 
 export default function TodoCard() {
   const [todos, setTodos] = useState<Todo[]>(defaultTodos);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const shaRef = useRef<string | undefined>(undefined);
+  const telegramIdRef = useRef<string | null>(null);
 
+  // Загрузка todos пользователя из GitHub при монтировании
+  useEffect(() => {
+    const fetchTodos = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const tgUser = typeof window !== "undefined" ? localStorage.getItem("tgUser") : null;
+        if (!tgUser) throw new Error("Пользователь не найден");
+        const { id } = JSON.parse(tgUser);
+        telegramIdRef.current = id;
+        const res = await fetch(`/api/data?telegram_id=${id}`);
+        const json = await res.json();
+        let parsed: UserData = typeof json.data === "string" ? JSON.parse(json.data) : json.data;
+        setTodos(parsed?.todos || []);
+        shaRef.current = json.data?.sha || undefined;
+      } catch (e: any) {
+        setError(e.message || "Ошибка загрузки");
+        setTodos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTodos();
+  }, []);
+
+  // Автоматически сохранять todos пользователя в GitHub при каждом изменении
+  useEffect(() => {
+    if (loading || !telegramIdRef.current) return;
+    const saveTodos = async () => {
+      setSaving(true);
+      setError(null);
+      try {
+        await fetch("/api/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ telegram_id: telegramIdRef.current, userData: { todos }, sha: shaRef.current }),
+        });
+      } catch (e: any) {
+        setError(e.message || "Ошибка сохранения");
+      } finally {
+        setSaving(false);
+      }
+    };
+    saveTodos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todos]);
+
+  // Добавить задачу
   const addTodo = () => {
     if (!title.trim()) return;
     setTodos((prev) => [
       ...prev,
-      {
-        id: `todo_${Date.now()}`,
-        title,
-        description: desc,
-        deadline,
-        status: "in_progress",
-        tags: [],
-      },
+      { id: `todo_${Date.now()}`, title, description: desc, deadline, status: "in_progress", tags: [] },
     ]);
-    setTitle("");
-    setDesc("");
-    setDeadline("");
+    setTitle(""); setDesc(""); setDeadline("");
   };
 
-  const removeTodo = (id: string) => {
-    setTodos((prev) => prev.filter((t) => t.id !== id));
-  };
+  // Удалить задачу
+  const removeTodo = (id: string) => setTodos((prev) => prev.filter((t) => t.id !== id));
 
-  const toggleStatus = (id: string) => {
-    setTodos((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? { ...t, status: t.status === "done" ? "in_progress" : "done" }
-          : t
-      )
-    );
-  };
+  // Переключить статус задачи
+  const toggleStatus = (id: string) => setTodos((prev) => prev.map((t) => t.id === id ? { ...t, status: t.status === "done" ? "in_progress" : "done" } : t));
 
   return (
     <motion.div
