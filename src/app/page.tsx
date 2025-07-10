@@ -48,12 +48,7 @@ export default function Home() {
               console.log('AUTH RESPONSE:', res.status, data);
               if (res.ok) {
                 localStorage.setItem('tgUser', JSON.stringify(fullUser));
-                window.location.assign('/dashboard');
-                setTimeout(() => {
-                  if (window.location.pathname !== '/dashboard') {
-                    window.location.replace('/dashboard');
-                  }
-                }, 500);
+                window.open('/dashboard', '_self');
               } else {
                 alert('Ошибка авторизации через Telegram: ' + (data.error || res.status));
               }
