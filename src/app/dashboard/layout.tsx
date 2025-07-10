@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 import SidebarNav from "@/components/SidebarNav";
 import TopbarProfile from "@/components/TopbarProfile";

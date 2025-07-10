@@ -1,7 +1,11 @@
 'use client';
 import Script from "next/script";
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
+/**
+ * Главная страница (Landing Page) с Neumorphism-стилем
+ */
 export default function Home() {
   const widgetRef = useRef(null);
 
@@ -19,13 +23,48 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-4xl font-bold mb-6 neumorph p-6">Time Life Tracker</h1>
-      <div className="neumorph p-6 flex flex-col items-center">
-        <p className="mb-4 text-lg">Войдите через Telegram для начала работы:</p>
-        {/* Telegram Login Widget */}
-        <div ref={widgetRef} id="telegram-login-widget" />
-      </div>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-primary p-4">
+      <motion.div
+        className="card flex flex-col items-center max-w-lg w-full mb-8"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+      >
+        <h1 className="text-4xl font-bold mb-4 text-accent select-none">Time Life Tracker</h1>
+        <p className="mb-4 text-lg text-text text-center">
+          Твой минималистичный трекер времени, задач и настроения с авторизацией через Telegram.<br/>
+          <span className="text-accent font-semibold">Neumorphism-дизайн</span>, плавные анимации, удобный дашборд и аналитика.
+        </p>
+        <div className="w-full flex flex-col items-center">
+          <div ref={widgetRef} id="telegram-login-widget" className="mb-2" />
+          <span className="text-xs text-gray-400">Вход через Telegram — быстро и безопасно</span>
+        </div>
+      </motion.div>
+      <motion.ul
+        className="flex flex-wrap gap-4 justify-center"
+        initial="hidden"
+        animate="visible"
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+      >
+        {[
+          { icon: '⏱️', text: 'Трекер времени с автосохранением' },
+          { icon: '📝', text: 'ToDo-лист с дедлайнами' },
+          { icon: '😊', text: 'Трекер настроения' },
+          { icon: '📊', text: 'Аналитика продуктивности' },
+          { icon: '📅', text: 'Интерактивный календарь' },
+        ].map((f, i) => (
+          <motion.li
+            key={i}
+            className="card flex items-center gap-2 px-4 py-2 text-base"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 + i * 0.1, duration: 0.4 }}
+          >
+            <span className="text-2xl select-none">{f.icon}</span>
+            <span>{f.text}</span>
+          </motion.li>
+        ))}
+      </motion.ul>
       <Script src="/telegram-auth.js" strategy="beforeInteractive" />
     </main>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 // TODO: Получать данные пользователя из контекста или props
