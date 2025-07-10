@@ -8,15 +8,16 @@ export default function Home() {
         <p className="mb-4 text-lg">Войдите через Telegram для начала работы:</p>
         {/* Telegram Login Widget */}
         <div id="telegram-login-widget">
-          <Script
-            src="https://telegram.org/js/telegram-widget.js?7"
-            strategy="afterInteractive"
-            data-telegram-login="@darlinxloginbot"
-            data-size="large"
-            data-onauth="onTelegramAuth(user)"
-            data-request-access="write"
-          />
-        </div>
+  <script
+    async
+    src="https://telegram.org/js/telegram-widget.js?7"
+    data-telegram-login="darlinxloginbot"
+    data-size="large"
+    data-userpic="false"
+    data-request-access="write"
+    data-onauth="onTelegramAuth(user)"
+  ></script>
+</div>
       </div>
       <Script id="telegram-auth-client" strategy="afterInteractive">
         {`
