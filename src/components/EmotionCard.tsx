@@ -3,11 +3,12 @@ import { motion } from "framer-motion";
 import type { Emotion, UserData } from "@/types/userData";
 
 const defaultEmotions: Emotion[] = [];
-
 const MOODS = ["😃","🙂","😐","😔","😡","😭"];
 
+/**
+ * Карточка трекера настроения с Neumorphism-стилем
+ */
 export default function EmotionCard() {
-  // Состояния: список эмоций, поля ввода, загрузка/ошибки, SHA и telegram_id
   const [emotions, setEmotions] = useState<Emotion[]>(defaultEmotions);
   const [date, setDate] = useState("");
   const [mood, setMood] = useState("");
@@ -77,21 +78,21 @@ export default function EmotionCard() {
 
   return (
     <motion.div
-      className="neumorph p-6 flex flex-col items-center w-full"
-      initial={{ opacity: 0, scale: 0.9 }}
+      className="card flex flex-col items-center w-full max-w-md"
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
       <h3 className="text-xl font-semibold mb-2">Настроение</h3>
-      <div className="flex gap-2 mb-4 w-full items-center">
+      <div className="flex gap-2 mb-4 w-full items-center justify-center flex-wrap">
         <input
           type="date"
-          className="border rounded-neumorph px-2 py-1 w-32"
+          className="input-neumorph w-32"
           value={date}
           onChange={e => setDate(e.target.value)}
         />
         <select
-          className="border rounded-neumorph px-2 py-1 w-20 text-xl"
+          className="input-neumorph w-20 text-xl"
           value={mood}
           onChange={e => setMood(e.target.value)}
         >
@@ -99,16 +100,18 @@ export default function EmotionCard() {
           {MOODS.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
         <input
-          className="border rounded-neumorph px-2 py-1 w-40"
+          className="input-neumorph w-40"
           placeholder="Заметка"
           value={note}
           onChange={e => setNote(e.target.value)}
         />
         <button
-          className="px-3 py-1 bg-accent text-white rounded-neumorph"
+          className="btn-neumorph"
           onClick={addEmotion}
         >Добавить</button>
       </div>
+      {saving && <div className="text-xs text-gray-400 mb-2">Сохраняем...</div>}
+      {error && <div className="text-xs text-danger mb-2">{error}</div>}
       <ul className="w-full max-h-32 overflow-y-auto text-sm">
         {emotions.length === 0 && <li className="text-gray-400">Нет записей</li>}
         {emotions.map((em, i) => (

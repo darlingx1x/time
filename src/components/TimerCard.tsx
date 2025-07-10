@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import type { TimeSession, UserData } from "@/types/userData";
 
+/**
+ * Карточка трекера времени с Neumorphism-стилем
+ */
 export default function TimerCard() {
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -71,6 +74,7 @@ export default function TimerCard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessions]);
 
+  // Запуск таймера
   const startTimer = () => {
     if (running) return;
     setRunning(true);
@@ -80,6 +84,7 @@ export default function TimerCard() {
     }, 1000);
   };
 
+  // Остановка таймера
   const stopTimer = () => {
     if (!running) return;
     setRunning(false);
@@ -102,6 +107,7 @@ export default function TimerCard() {
     setStartTime(null);
   };
 
+  // Сброс таймера
   const resetTimer = () => {
     setRunning(false);
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -109,6 +115,7 @@ export default function TimerCard() {
     setStartTime(null);
   };
 
+  // Форматирование времени
   const format = (ms: number) => {
     const sec = Math.floor(ms / 1000) % 60;
     const min = Math.floor(ms / 60000) % 60;
@@ -118,29 +125,32 @@ export default function TimerCard() {
 
   return (
     <motion.div
-      className="neumorph p-6 flex flex-col items-center"
-      initial={{ opacity: 0, scale: 0.9 }}
+      className="card flex flex-col items-center w-full max-w-md"
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
       <h3 className="text-xl font-semibold mb-2">Трекер времени</h3>
-      <div className="mb-2 text-3xl font-mono">{format(elapsed)}</div>
-      <div className="flex gap-2">
+      <div className="mb-2 text-3xl font-mono select-none">{format(elapsed)}</div>
+      <div className="flex gap-2 mb-2">
         {!running ? (
-          <button className="px-4 py-2 bg-accent text-white rounded-neumorph mt-2" onClick={startTimer}>Старт</button>
+          <button className="btn-neumorph" onClick={startTimer}>Старт</button>
         ) : (
-          <button className="px-4 py-2 bg-accent text-white rounded-neumorph mt-2" onClick={stopTimer}>Стоп</button>
+          <button className="btn-neumorph" onClick={stopTimer}>Стоп</button>
         )}
-        <button className="px-4 py-2 bg-card text-text rounded-neumorph mt-2 border border-accent" onClick={resetTimer}>Сброс</button>
+        <button className="btn-neumorph" onClick={resetTimer}>Сброс</button>
       </div>
+      {saving && <div className="text-xs text-gray-400 mb-2">Сохраняем...</div>}
+      {error && <div className="text-xs text-danger mb-2">{error}</div>}
       <div className="mt-4 w-full">
         <h4 className="font-semibold mb-2">Сессии:</h4>
         <ul className="text-xs max-h-32 overflow-y-auto">
           {sessions.map((s, i) => (
-            <li key={i}>
+            <li key={i} className="mb-1">
               {new Date(s.start_time).toLocaleTimeString()} — {new Date(s.end_time).toLocaleTimeString()} | {format(s.duration_minutes * 60000)}
             </li>
           ))}
+          {sessions.length === 0 && <li className="text-gray-400">Нет сессий</li>}
         </ul>
       </div>
     </motion.div>

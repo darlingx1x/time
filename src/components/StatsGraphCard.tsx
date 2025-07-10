@@ -14,6 +14,9 @@ function totalTime(sessions: TimeSession[]) {
   }, 0);
 }
 
+/**
+ * Карточка аналитики с Neumorphism-стилем
+ */
 export default function StatsGraphCard() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [emotions, setEmotions] = useState<Emotion[]>([]);
@@ -66,12 +69,13 @@ export default function StatsGraphCard() {
 
   return (
     <motion.div
-      className="neumorph p-6 flex flex-col items-center w-full"
-      initial={{ opacity: 0, scale: 0.9 }}
+      className="card flex flex-col items-center w-full max-w-md"
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
       <h3 className="text-xl font-semibold mb-2">Аналитика</h3>
+      {error && <div className="text-xs text-danger mb-2">{error}</div>}
       <div className="w-full flex flex-col gap-2">
         <div className="bg-card rounded-neumorph px-3 py-2 flex justify-between">
           <span>Выполнено задач:</span>

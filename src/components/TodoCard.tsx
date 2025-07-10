@@ -4,6 +4,9 @@ import type { Todo, UserData } from "@/types/userData";
 
 const defaultTodos: Todo[] = [];
 
+/**
+ * Карточка задач с Neumorphism-стилем
+ */
 export default function TodoCard() {
   const [todos, setTodos] = useState<Todo[]>(defaultTodos);
   const [title, setTitle] = useState("");
@@ -80,38 +83,40 @@ export default function TodoCard() {
 
   return (
     <motion.div
-      className="neumorph p-6 flex flex-col items-center w-full"
-      initial={{ opacity: 0, scale: 0.9 }}
+      className="card flex flex-col items-center w-full max-w-md"
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
       <h3 className="text-xl font-semibold mb-2">Задачи</h3>
-      <div className="w-full mb-4">
+      <div className="w-full mb-4 flex flex-wrap gap-2 items-center justify-center">
         <input
-          className="border rounded-neumorph px-2 py-1 mr-2 mb-2 w-32"
+          className="input-neumorph w-32"
           placeholder="Название"
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
         <input
-          className="border rounded-neumorph px-2 py-1 mr-2 mb-2 w-40"
+          className="input-neumorph w-40"
           placeholder="Описание"
           value={desc}
           onChange={e => setDesc(e.target.value)}
         />
         <input
-          className="border rounded-neumorph px-2 py-1 mb-2 w-28"
+          className="input-neumorph w-28"
           type="date"
           value={deadline}
           onChange={e => setDeadline(e.target.value)}
         />
         <button
-          className="px-3 py-1 bg-accent text-white rounded-neumorph"
+          className="btn-neumorph"
           onClick={addTodo}
         >
           Добавить
         </button>
       </div>
+      {saving && <div className="text-xs text-gray-400 mb-2">Сохраняем...</div>}
+      {error && <div className="text-xs text-danger mb-2">{error}</div>}
       <ul className="w-full max-h-40 overflow-y-auto text-sm">
         {todos.length === 0 && <li className="text-gray-400">Нет задач</li>}
         {todos.map((todo) => (
@@ -126,13 +131,13 @@ export default function TodoCard() {
             </div>
             <div className="flex gap-1 items-center">
               <button
-                className={`text-xs px-2 py-1 rounded ${todo.status === "done" ? "bg-primary text-accent" : "bg-accent text-white"}`}
+                className={`btn-neumorph text-xs px-2 py-1 ${todo.status === "done" ? "bg-primary text-accent" : "bg-accent text-white"}`}
                 onClick={() => toggleStatus(todo.id)}
               >
                 {todo.status === "done" ? "В работу" : "Готово"}
               </button>
               <button
-                className="text-xs px-2 py-1 bg-red-200 text-red-700 rounded"
+                className="btn-neumorph text-xs px-2 py-1 bg-danger text-white"
                 onClick={() => removeTodo(todo.id)}
               >
                 ✕
