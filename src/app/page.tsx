@@ -7,17 +7,17 @@ export default function Home() {
       <div className="neumorph p-6 flex flex-col items-center">
         <p className="mb-4 text-lg">Войдите через Telegram для начала работы:</p>
         {/* Telegram Login Widget */}
-        <div id="telegram-login-widget">
-  <script
-    async
-    src="https://telegram.org/js/telegram-widget.js?7"
-    data-telegram-login="darlinxloginbot"
-    data-size="large"
-    data-userpic="false"
-    data-request-access="write"
-    data-onauth="onTelegramAuth(user)"
-  ></script>
-</div>
+        <div
+          id="telegram-login-widget"
+          dangerouslySetInnerHTML={{
+            __html: `<script async src="https://telegram.org/js/telegram-widget.js?7"
+              data-telegram-login="darlinxloginbot"
+              data-size="large"
+              data-userpic="false"
+              data-request-access="write"
+              data-onauth="onTelegramAuth(user)"></script>`
+          }}
+        />
       </div>
       <Script id="telegram-auth-client" strategy="afterInteractive">
         {`
