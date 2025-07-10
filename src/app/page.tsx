@@ -14,6 +14,7 @@ export default function Home() {
     script.dataset.userpic = "false";
     script.dataset.requestAccess = "write";
     script.dataset.onauth = "onTelegramAuth(user)";
+    script.dataset.authUrl = "https://time-36a7.onrender.com/dashboard";
     widgetRef.current.appendChild(script);
   }, []);
 
