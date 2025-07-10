@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: #e0e5ec;
+  color: #333b4a;
+  min-height: 100vh;
+}
+
+.neumorph {
+  box-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff;
+  background: #e0e5ec;
+  border-radius: 1.5rem;
+}
+
+.neumorph-inset {
+  box-shadow: inset 8px 8px 16px #d1d9e6, inset -8px -8px 16px #ffffff;
+  background: #e0e5ec;
+  border-radius: 1.5rem;
+}
