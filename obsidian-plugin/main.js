@@ -198,8 +198,9 @@ class NextJsSyncPlugin extends Plugin {
 		}
 
 		try {
-			const content = await this.app.vault.read(file);
-			const frontmatter = this.parseFrontmatter(content);
+			const fullContent = await this.app.vault.read(file);
+			const frontmatter = this.parseFrontmatter(fullContent);
+			const content = this.extractContent(fullContent); // Извлекаем содержимое без frontmatter
 			const slug = this.extractSlug(file, frontmatter);
 			const title = frontmatter.title || file.basename;
 
@@ -319,13 +320,22 @@ class NextJsSyncPlugin extends Plugin {
 				const key = line.substring(0, colonIndex).trim();
 				let value = line.substring(colonIndex + 1).trim();
 				
+				// Убираем кавычки
 				if ((value.startsWith('"') && value.endsWith('"')) || 
 					(value.startsWith("'") && value.endsWith("'"))) {
 					value = value.slice(1, -1);
 				}
 				
+				// Обрабатываем массивы
 				if (value.startsWith('[') && value.endsWith(']')) {
 					value = value.slice(1, -1).split(',').map(item => item.trim());
+				}
+				// Обрабатываем boolean значения
+				else if (value === 'true') {
+					value = true;
+				}
+				else if (value === 'false') {
+					value = false;
 				}
 				
 				frontmatter[key] = value;
@@ -333,6 +343,15 @@ class NextJsSyncPlugin extends Plugin {
 		}
 
 		return frontmatter;
+	}
+
+	extractContent(fullContent) {
+		const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+		const match = fullContent.match(frontmatterRegex);
+		if (match) {
+			return fullContent.substring(match[0].length).trim();
+		}
+		return fullContent.trim();
 	}
 
 	extractSlug(file, frontmatter) {
