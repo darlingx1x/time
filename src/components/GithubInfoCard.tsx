@@ -60,6 +60,7 @@ const GithubInfoCard: React.FC = () => {
   };
 
   // Загрузка данных
+  const fetchRepos = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -72,6 +73,7 @@ const GithubInfoCard: React.FC = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => { fetchRepos(); fetchImages(); }, []);
 
