@@ -178,11 +178,22 @@ class NextJsSyncPlugin extends Plugin {
 			return false;
 		}
 
+		// Проверяем, что это файл, а не папка
+		if (file.children) {
+			return false;
+		}
+
 		return file.path.startsWith(this.settings.folderPath);
 	}
 
 	async syncFile(file) {
 		if (!this.settings.enabled || !this.settings.websiteUrl || !this.settings.apiToken) {
+			return;
+		}
+
+		// Дополнительная проверка, что это файл, а не папка
+		if (file.children) {
+			console.log(`Пропускаю папку: ${file.path}`);
 			return;
 		}
 
@@ -259,7 +270,7 @@ class NextJsSyncPlugin extends Plugin {
 		}
 
 		const files = this.app.vault.getMarkdownFiles().filter(file => 
-			file.path.startsWith(this.settings.folderPath)
+			file.path.startsWith(this.settings.folderPath) && !file.children
 		);
 
 		console.log(`🔄 Начинаю синхронизацию ${files.length} файлов...`);
