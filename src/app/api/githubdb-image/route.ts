@@ -71,8 +71,16 @@ export async function POST(req: NextRequest) {
     { file: fileName, description, date: new Date().toISOString() }
   ];
   const metaBase64 = Buffer.from(JSON.stringify(newMeta, null, 2), 'utf-8').toString('base64');
+  // Получаем sha заново перед записью
+  let latestSha = undefined;
+  try {
+    const { data } = await octokit.rest.repos.getContent({ owner, repo, path: META_PATH });
+    if ('sha' in data) latestSha = data.sha;
+  } catch (e: any) {
+    if (e.status !== 404) throw e;
+  }
   const opts = { owner, repo, path: META_PATH, message: `Update images meta`, content: metaBase64 };
-  if (sha) (opts as any).sha = sha;
+  if (latestSha) (opts as any).sha = latestSha;
   await octokit.rest.repos.createOrUpdateFileContents(opts);
 
   return NextResponse.json({ ok: true, file: fileName });

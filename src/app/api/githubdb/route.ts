@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   const { newItem } = body;
   if (!newItem) return NextResponse.json({ error: "Missing newItem" }, { status: 400 });
   const { owner, repo } = parseRepo(repoUrl);
-  // Get current data and sha
+  // Get current data and sha fresh before every write
   let oldData = [];
   let sha = undefined;
   try {
@@ -50,8 +50,15 @@ export async function POST(req: NextRequest) {
   const newData = [...(Array.isArray(oldData) ? oldData : []), newItem];
   const base64Content = Buffer.from(JSON.stringify(newData, null, 2), 'utf-8').toString('base64');
   const message = `Добавлен новый элемент в githubdb: ${newItem.name || newItem.title || "item"}`;
+  let latestSha = undefined;
+  try {
+    const { data } = await octokit.rest.repos.getContent({ owner, repo, path: DATA_PATH });
+    if ('sha' in data) latestSha = data.sha;
+  } catch (e: any) {
+    if (e.status !== 404) return NextResponse.json({ error: e.message }, { status: 500 });
+  }
   const opts: any = { owner, repo, path: DATA_PATH, message, content: base64Content };
-  if (sha) opts.sha = sha;
+  if (latestSha) opts.sha = latestSha;
   const res = await octokit.rest.repos.createOrUpdateFileContents(opts);
   return NextResponse.json({ ok: true, res });
 }

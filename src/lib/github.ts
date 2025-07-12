@@ -7,7 +7,7 @@ function parseRepo(repo: string) {
   const [owner, name] = repo.split("/");
   if (!owner || !name) throw new Error("Invalid GitHub repo format. Expected 'owner/repo'");
   return { owner, repo: name };
-}
+} // уже верный вариант, не трогать
 
 export async function getUserDataFile(telegramId: string | number) {
   const { owner, repo } = parseRepo(repoUrl);
