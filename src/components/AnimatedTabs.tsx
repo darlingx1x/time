@@ -8,6 +8,7 @@ const TABS = [
   { key: "emotion", label: "Настроение" },
   { key: "stats", label: "Аналитика" },
   { key: "calendar", label: "Календарь" },
+  { key: "github", label: "GitHub" },
 ];
 
 export default function AnimatedTabs({ onTabChange }: { onTabChange: (tab: string) => void }) {

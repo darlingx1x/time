@@ -12,12 +12,15 @@ const EmotionCard = dynamic(() => import("@/components/EmotionCard"), { ssr: fal
 const StatsGraphCard = dynamic(() => import("@/components/StatsGraphCard"), { ssr: false });
 const CalendarView = dynamic(() => import("@/components/CalendarView"), { ssr: false });
 
+const GithubInfoCard = dynamic(() => import("@/components/GithubInfoCard"), { ssr: false });
+
 const CARD_MAP: Record<string, JSX.Element> = {
   timer: <Suspense fallback={<div>Загрузка...</div>}><TimerCard /></Suspense>,
   todo: <Suspense fallback={<div>Загрузка...</div>}><TodoCard /></Suspense>,
   emotion: <Suspense fallback={<div>Загрузка...</div>}><EmotionCard /></Suspense>,
   stats: <Suspense fallback={<div>Загрузка...</div>}><StatsGraphCard /></Suspense>,
   calendar: <Suspense fallback={<div>Загрузка...</div>}><CalendarView /></Suspense>,
+  github: <Suspense fallback={<div>Загрузка...</div>}><GithubInfoCard /></Suspense>,
 };
 
 export default function DashboardPage() {
