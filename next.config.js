@@ -42,6 +42,24 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Отключаем кэширование для страниц отдельных статей
+        source: '/articles/:slug*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: '0',
+          },
+        ],
+      },
     ];
   },
   // Additional CORS configuration

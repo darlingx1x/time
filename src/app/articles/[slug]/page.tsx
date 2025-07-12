@@ -2,6 +2,11 @@ import { getNoteBySlug, getAllNotes } from "@/lib/notes";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
+import ArticleRefreshButton from "@/components/ArticleRefreshButton";
+
+// Принудительно отключаем кэширование для страниц статей
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface Props {
   params: { slug: string };
@@ -23,14 +28,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export async function generateStaticParams() {
-  const notes = await getAllNotes();
-  return notes
-    .filter(note => note.published)
-    .map((note) => ({
-      slug: note.slug,
-    }));
-}
+// Отключаем статическую генерацию для динамического обновления
+// export async function generateStaticParams() {
+//   const notes = await getAllNotes();
+//   return notes
+//     .filter(note => note.published)
+//     .map((note) => ({
+//       slug: note.slug,
+//     }));
+// }
 
 export default async function ArticlePage({ params }: Props) {
   const note = await getNoteBySlug(params.slug);
@@ -38,6 +44,17 @@ export default async function ArticlePage({ params }: Props) {
   if (!note || !note.published) {
     notFound();
   }
+
+  // Отладочная информация
+  console.log('=== ARTICLE PAGE DEBUG ===');
+  console.log('Slug:', params.slug);
+  console.log('Note:', { 
+    title: note.title, 
+    updatedAt: note.updatedAt,
+    contentLength: note.content?.length,
+    frontmatter: note.frontmatter 
+  });
+  console.log('==========================');
 
   return (
     <div className="min-h-screen bg-primary p-6">
@@ -98,6 +115,19 @@ export default async function ArticlePage({ params }: Props) {
               dangerouslySetInnerHTML={{ __html: note.html || '' }}
             />
           </article>
+
+          {/* Отладочная информация */}
+          <div className="mt-8 p-4 bg-yellow-100 rounded-lg text-sm">
+            <p><strong>Отладка статьи:</strong></p>
+            <p>Slug: {params.slug}</p>
+            <p>Заголовок: {note.title}</p>
+            <p>Обновлено: {new Date(note.updatedAt).toLocaleString('ru-RU')}</p>
+            <p>Длина контента: {note.content?.length} символов</p>
+            <p>Frontmatter: {JSON.stringify(note.frontmatter, null, 2)}</p>
+            <p className="mt-2">
+              <ArticleRefreshButton slug={params.slug} />
+            </p>
+          </div>
         </div>
       </div>
     </div>
