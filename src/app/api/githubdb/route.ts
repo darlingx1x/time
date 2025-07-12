@@ -10,7 +10,7 @@ function parseRepo(url: string) {
   return { owner: match[1], repo: match[2] };
 }
 
-const DATA_PATH = "githubdb/data.json";
+const DATA_PATH = "githubdb/db.json";
 
 export async function GET() {
   const { owner, repo } = parseRepo(repoUrl);
