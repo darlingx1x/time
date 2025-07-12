@@ -83,6 +83,8 @@ published: true
 
 class NextJsSyncPlugin extends Plugin {
 	async onload() {
+		new Notice('Next.js Sync плагин активирован!');
+		console.log('Next.js Sync плагин активирован!');
 		this.settings = {
 			enabled: false,
 			websiteUrl: '',
