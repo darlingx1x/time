@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Repo {
   name: string;
@@ -24,6 +25,10 @@ const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/" + (process.env.NEXT
 
 const GithubInfoCard: React.FC = () => {
   const [repos, setRepos] = useState<Repo[]>([]);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const prevRepos = useRef<Repo[]>([]);
+  const prevImages = useRef<ImageMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -51,7 +56,17 @@ const GithubInfoCard: React.FC = () => {
     try {
       const res = await fetch("/api/githubdb-image");
       const data = await res.json();
-      setImages(Array.isArray(data.data) ? data.data.reverse() : []);
+      const newImages = Array.isArray(data.data) ? data.data.reverse() : [];
+      if (prevImages.current.length && JSON.stringify(prevImages.current) !== JSON.stringify(newImages)) {
+        setShowUpdate(true);
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+        }
+        setTimeout(() => setShowUpdate(false), 2000);
+      }
+      setImages(newImages);
+      prevImages.current = newImages;
     } catch (e: any) {
       setImgError("Ошибка загрузки изображений");
     } finally {
@@ -66,7 +81,17 @@ const GithubInfoCard: React.FC = () => {
     try {
       const res = await fetch("/api/githubdb");
       const data = await res.json();
-      setRepos(Array.isArray(data.data) ? data.data : []);
+      const newRepos = Array.isArray(data.data) ? data.data : [];
+      if (prevRepos.current.length && JSON.stringify(prevRepos.current) !== JSON.stringify(newRepos)) {
+        setShowUpdate(true);
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+        }
+        setTimeout(() => setShowUpdate(false), 2000);
+      }
+      setRepos(newRepos);
+      prevRepos.current = newRepos;
     } catch (e: any) {
       setError("Ошибка загрузки данных");
     } finally {
@@ -75,7 +100,15 @@ const GithubInfoCard: React.FC = () => {
   };
 
 
-  useEffect(() => { fetchRepos(); fetchImages(); }, []);
+  useEffect(() => {
+    fetchRepos();
+    fetchImages();
+    const interval = setInterval(() => {
+      fetchRepos();
+      fetchImages();
+    }, 5000); // каждые 5 секунд
+    return () => clearInterval(interval);
+  }, []);
 
   // Обработка формы
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -105,6 +138,33 @@ const GithubInfoCard: React.FC = () => {
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-xl neumorph">
+      <audio ref={audioRef} src="/notification.mp3" preload="auto" />
+      <AnimatePresence>
+        {showUpdate && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: -30, filter: "blur(8px)" }}
+            animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.9, y: -30, filter: "blur(8px)" }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="fixed top-8 left-1/2 -translate-x-1/2 px-8 py-4 z-50"
+            style={{
+              background: "linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)",
+              color: "#fff",
+              borderRadius: "1.5rem",
+              boxShadow: "0 8px 32px 0 rgba(99,102,241,0.25), 0 0 0 4px #a78bfa55",
+              border: "2px solid #fff",
+              fontWeight: 700,
+              fontSize: "1.25rem",
+              letterSpacing: "0.03em",
+              textShadow: "0 2px 8px #312e8199",
+              filter: "drop-shadow(0 0 12px #a78bfa)",
+              backdropFilter: "blur(6px)"
+            }}
+          >
+            <span role="img" aria-label="spark">✨</span> Появились новые данные! <span role="img" aria-label="bell">🔔</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="flex items-center mb-4">
         <img
           src={DEFAULT_USER.avatar_url}
