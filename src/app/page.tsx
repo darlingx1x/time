@@ -36,14 +36,7 @@ export default function Home() {
           <span className="text-accent font-semibold">Neumorphism-дизайн</span>, плавные анимации, удобный дашборд и аналитика.
         </p>
         <div className="w-full flex flex-col items-center">
-          <button
-            className="telegram-login-btn mb-2 px-5 py-2 bg-accent text-white font-semibold rounded-lg shadow hover:bg-accent-dark transition"
-            onClick={() => {
-              window.location.href = `https://oauth.telegram.org/auth?bot=${process.env.NEXT_PUBLIC_TELEGRAM_BOT}&origin=${encodeURIComponent(window.location.origin)}&embed=1`;
-            }}
-          >
-            Log in with Telegram
-          </button>
+          <div ref={widgetRef} id="telegram-login-widget" className="mb-2" />
           <span className="text-xs text-gray-400">Вход через Telegram — быстро и безопасно</span>
         </div>
       </motion.div>
