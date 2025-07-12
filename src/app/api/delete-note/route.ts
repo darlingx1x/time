@@ -16,7 +16,7 @@ export async function DELETE(req: NextRequest) {
     if (!validateObsidianToken(token)) {
       return NextResponse.json(
         { success: false, error: "Неверный токен авторизации" },
-        { status: 500 }
+        { status: 401 }
       );
     }
 
