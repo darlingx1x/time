@@ -1,43 +1,42 @@
-import { NextRequest, NextResponse } from "next/server";
+export const dynamic = 'force-dynamic';
+
 import { getAllNotes } from "@/lib/notes";
 
-// Обработка preflight запросов
-export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
+// Простая функция для создания CORS-заголовков
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
+  };
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': 'app://obsidian.md',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Credentials': 'true',
-    },
+    headers: corsHeaders(),
   });
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
     const notes = await getAllNotes();
-    return NextResponse.json({ success: true, notes }, {
+    return new Response(JSON.stringify({ success: true, notes }), {
+      status: 200,
       headers: {
-        'Access-Control-Allow-Origin': 'app://obsidian.md',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Credentials': 'true',
+        ...corsHeaders(),
+        'Content-Type': 'application/json'
       }
     });
   } catch (error: any) {
     console.error('Error fetching notes:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { 
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': 'app://obsidian.md',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          'Access-Control-Allow-Credentials': 'true',
-        }
+    return new Response(JSON.stringify({ success: false, error: error.message }), {
+      status: 500,
+      headers: {
+        ...corsHeaders(),
+        'Content-Type': 'application/json'
       }
-    );
+    });
   }
 } 

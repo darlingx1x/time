@@ -3,15 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   
-  // Добавляем CORS-заголовки для API-роутов
+  // Добавляем CORS-заголовки для всех API-роутов
   if (url.pathname.startsWith('/api/')) {
     const response = NextResponse.next();
     
-    // Разрешаем запросы с Obsidian (Electron app)
-    response.headers.set('Access-Control-Allow-Origin', 'app://obsidian.md');
+    // Универсальные CORS-заголовки
+    response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    response.headers.set('Access-Control-Max-Age', '86400');
     
     // Обрабатываем preflight запросы
     if (request.method === 'OPTIONS') {
@@ -29,6 +29,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
   }
+  
   return NextResponse.next();
 }
 
