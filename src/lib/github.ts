@@ -3,6 +3,8 @@ import { Octokit } from 'octokit';
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const repoUrl = process.env.GITHUB_REPO || '';
 
+export { octokit, repoUrl };
+
 function parseRepo(repo: string) {
   const [owner, name] = repo.split("/");
   if (!owner || !name) throw new Error("Invalid GitHub repo format. Expected 'owner/repo'");
