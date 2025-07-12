@@ -30,7 +30,19 @@ export async function saveUserDataFile(telegramId: string | number, content: str
   const path = `users/${telegramId}.json`;
   let base64Content = Buffer.from(content, 'utf-8').toString('base64');
   let message = `Update user data for ${telegramId}`;
+  // Получаем sha, если не передан явно
+  let fileSha = sha;
+  if (!fileSha) {
+    try {
+      const { data } = await octokit.rest.repos.getContent({ owner, repo, path });
+      if (typeof data === 'object' && 'sha' in data) {
+        fileSha = data.sha;
+      }
+    } catch (e: any) {
+      if (e.status !== 404) throw e;
+    }
+  }
   let opts: any = { owner, repo, path, message, content: base64Content };
-  if (sha) opts.sha = sha;
+  if (fileSha) opts.sha = fileSha;
   return octokit.rest.repos.createOrUpdateFileContents(opts);
 }

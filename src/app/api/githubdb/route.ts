@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
   } catch (e: any) {
     if (e.status !== 404) return NextResponse.json({ error: e.message }, { status: 500 });
   }
-  const newData = [...oldData, newItem];
+  const newData = [...(Array.isArray(oldData) ? oldData : []), newItem];
   const base64Content = Buffer.from(JSON.stringify(newData, null, 2), 'utf-8').toString('base64');
   const message = `Добавлен новый элемент в githubdb: ${newItem.name || newItem.title || "item"}`;
   const opts: any = { owner, repo, path: DATA_PATH, message, content: base64Content };
