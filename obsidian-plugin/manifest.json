@@ -1,0 +1,12 @@
+{
+  "id": "nextjs-sync",
+  "name": "Next.js Sync",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Синхронизация заметок с Next.js сайтом",
+  "author": "darlingx1x",
+  "authorUrl": "https://github.com/darlingx1x/testbd",
+  "main": "main.js",
+  "isDesktopOnly": false
+  
+} 

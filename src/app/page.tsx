@@ -2,6 +2,7 @@
 import Script from "next/script";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 /**
  * Главная страница (Landing Page) с Neumorphism-стилем
@@ -40,6 +41,25 @@ export default function Home() {
           <span className="text-xs text-gray-400">Вход через Telegram — быстро и безопасно</span>
         </div>
       </motion.div>
+
+      {/* Навигационные ссылки */}
+      <motion.div
+        className="flex gap-4 mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <Link href="/articles">
+          <motion.button
+            className="btn-neumorph"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            📚 Статьи
+          </motion.button>
+        </Link>
+      </motion.div>
+
       <motion.ul
         className="flex flex-wrap gap-4 justify-center"
         initial="hidden"
@@ -52,6 +72,7 @@ export default function Home() {
           { icon: '😊', text: 'Трекер настроения' },
           { icon: '📊', text: 'Аналитика продуктивности' },
           { icon: '📅', text: 'Интерактивный календарь' },
+          { icon: '📚', text: 'Синхронизация с Obsidian' },
         ].map((f, i) => (
           <motion.li
             key={i}
