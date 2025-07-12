@@ -3,17 +3,10 @@ import { Octokit } from 'octokit';
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const repoUrl = process.env.GITHUB_REPO || '';
 
-function parseRepo(url: string) {
-  // Поддержка форматов: 'owner/repo', 'https://github.com/owner/repo', 'https://github.com/owner/repo.git'
-  if (/^[\w-]+\/[\w.-]+$/.test(url)) {
-    const [owner, repo] = url.split('/');
-    return { owner, repo };
-  }
-  const match = url.match(/github.com[/:]([^/]+)\/(.*?)(?:\.git)?$/);
-  if (match) {
-    return { owner: match[1], repo: match[2] };
-  }
-  throw new Error('Invalid GitHub repo URL');
+function parseRepo(repo: string) {
+  const [owner, name] = repo.split("/");
+  if (!owner || !name) throw new Error("Invalid GitHub repo format. Expected 'owner/repo'");
+  return { owner, repo: name };
 }
 
 export async function getUserDataFile(telegramId: string | number) {

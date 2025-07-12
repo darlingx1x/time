@@ -4,10 +4,10 @@ import { Octokit } from "octokit";
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const repoUrl = process.env.GITHUB_REPO || "";
 
-function parseRepo(url: string) {
-  const match = url.match(/github.com[/:]([^/]+)\/(.*?)(?:\.git)?$/);
-  if (!match) throw new Error("Invalid GitHub repo URL");
-  return { owner: match[1], repo: match[2] };
+function parseRepo(repo: string) {
+  const [owner, name] = repo.split("/");
+  if (!owner || !name) throw new Error("Invalid GitHub repo format. Expected 'owner/repo'");
+  return { owner, repo: name };
 }
 
 const META_PATH = "githubdb/images/meta.json";
