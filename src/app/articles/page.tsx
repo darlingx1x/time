@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { gsap } from "gsap";
+import MagicBento from "@/components/MagicBento";
 
 export interface BentoCardProps {
   color?: string;
