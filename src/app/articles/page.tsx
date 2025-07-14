@@ -1,29 +1,70 @@
-import { getAllNotes } from "@/lib/notes";
-import Link from "next/link";
-import { Note } from "@/types/note";
-import RefreshButton from "@/components/RefreshButton";
+"use client";
+import React from "react";
 import MagicBento from "@/components/MagicBento";
+import RefreshButton from "@/components/RefreshButton";
+import { getAllNotes } from "@/lib/notes";
 
-// Принудительно отключаем кэширование для этой страницы
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+const cardData = [
+  {
+    color: "#060010",
+    title: "Analytics",
+    description: "Track user behavior",
+    label: "Insights",
+  },
+  {
+    color: "#060010",
+    title: "Dashboard",
+    description: "Centralized data view",
+    label: "Overview",
+  },
+  {
+    color: "#060010",
+    title: "Collaboration",
+    description: "Work together seamlessly",
+    label: "Teamwork",
+  },
+  {
+    color: "#060010",
+    title: "Automation",
+    description: "Streamline workflows",
+    label: "Efficiency",
+  },
+  {
+    color: "#060010",
+    title: "Integration",
+    description: "Connect favorite tools",
+    label: "Connectivity",
+  },
+  {
+    color: "#060010",
+    title: "Security",
+    description: "Enterprise-grade protection",
+    label: "Protection",
+  },
+];
 
 export default async function ArticlesPage() {
   const notes = await getAllNotes();
   const publishedNotes = notes.filter(note => note.published);
 
-  // Отладочная информация
-  console.log('=== ARTICLES PAGE DEBUG ===');
-  console.log('Total notes:', notes.length);
-  console.log('Published notes:', publishedNotes.length);
-  console.log('All notes:', notes.map(n => ({ slug: n.slug, title: n.title, published: n.published, frontmatter: n.frontmatter })));
-  console.log('===========================');
-
+  // Если есть статьи из Obsidian — показываем их через MagicBento
+  // Если нет — показываем MagicBento с cardData (заглушка)
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f7fa] to-[#e8ebf0] py-20 px-10">
       <div className="max-w-7xl mx-auto">
-        <MagicBento notes={publishedNotes} />
-        {/* Отладка и кнопки обновления, если нужно */}
+        <MagicBento
+          notes={publishedNotes.length > 0 ? publishedNotes : cardData}
+          textAutoHide={true}
+          enableStars={true}
+          enableSpotlight={true}
+          enableBorderGlow={true}
+          enableTilt={true}
+          enableMagnetism={true}
+          clickEffect={true}
+          spotlightRadius={300}
+          particleCount={12}
+          glowColor="132, 0, 255"
+        />
         <div className="mt-8">
           <div className="p-4 bg-yellow-100 rounded-lg text-sm">
             <p><strong>Отладка:</strong></p>
@@ -35,18 +76,6 @@ export default async function ArticlesPage() {
             </p>
           </div>
         </div>
-        {publishedNotes.length === 0 && (
-          <div className="p-8 text-center">
-            <p className="text-gray-500 text-lg">
-              Пока нет опубликованных статей
-            </p>
-            {notes.length > 0 && (
-              <p className="text-sm text-gray-400 mt-2">
-                Есть {notes.length} неопубликованных заметок
-              </p>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
