@@ -1,12 +1,57 @@
-'use client';
-
+"use client";
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-import { Note } from "@/types/note";
 import { gsap } from "gsap";
+import Link from "next/link";
 
-export interface MagicBentoProps {
-  notes: Note[];
+const cardData = [
+  {
+    color: "#060010",
+    title: "Analytics",
+    description: "Track user behavior",
+    label: "Insights",
+  },
+  {
+    color: "#060010",
+    title: "Dashboard",
+    description: "Centralized data view",
+    label: "Overview",
+  },
+  {
+    color: "#060010",
+    title: "Collaboration",
+    description: "Work together seamlessly",
+    label: "Teamwork",
+  },
+  {
+    color: "#060010",
+    title: "Automation",
+    description: "Streamline workflows",
+    label: "Efficiency",
+  },
+  {
+    color: "#060010",
+    title: "Integration",
+    description: "Connect favorite tools",
+    label: "Connectivity",
+  },
+  {
+    color: "#060010",
+    title: "Security",
+    description: "Enterprise-grade protection",
+    label: "Protection",
+  },
+];
+
+export interface BentoCardProps {
+  color?: string;
+  title?: string;
+  description?: string;
+  label?: string;
+  textAutoHide?: boolean;
+  disableAnimations?: boolean;
+}
+
+export interface BentoProps {
   textAutoHide?: boolean;
   enableStars?: boolean;
   enableSpotlight?: boolean;
@@ -459,8 +504,7 @@ const ParticleCard: React.FC<{
   );
 };
 
-const MagicBento: React.FC<MagicBentoProps> = ({
-  notes,
+const MagicBento: React.FC<BentoProps> = ({
   textAutoHide = true,
   enableStars = true,
   enableSpotlight = true,
@@ -491,12 +535,12 @@ const MagicBento: React.FC<MagicBentoProps> = ({
       )}
       <BentoCardGrid gridRef={gridRef}>
         <div className="card-responsive grid gap-2">
-          {notes.map((note, index) => {
+          {cardData.map((card, index) => {
             const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[200px] w-full max-w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
               enableBorderGlow ? "card--border-glow" : ""
             }`;
             const cardStyle = {
-              backgroundColor: "#060010",
+              backgroundColor: card.color,
               borderColor: "#392e4e",
               color: "#fff",
               "--glow-x": "50%",
@@ -505,7 +549,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
               "--glow-radius": "200px",
             } as React.CSSProperties;
             return (
-              <Link href={`/articles/${note.slug}`} key={note.slug} className="block h-full">
+              <Link href="#" key={index} className="block h-full">
                 <ParticleCard
                   className={baseClassName}
                   style={cardStyle}
@@ -518,29 +562,17 @@ const MagicBento: React.FC<MagicBentoProps> = ({
                 >
                   <div className="card__header flex justify-between gap-3 relative text-white mb-2">
                     <span className="card__label text-base font-semibold truncate max-w-[70%]">
-                      {note.title}
+                      {card.label}
                     </span>
                     <span className="text-xs opacity-70 whitespace-nowrap">
-                      {new Date(note.updatedAt).toLocaleDateString("ru-RU")}
+                      {card.title}
                     </span>
                   </div>
                   <div className="card__content flex flex-col relative text-white flex-1">
-                    {note.frontmatter.description && (
+                    {card.description && (
                       <p className={`text-xs leading-5 opacity-90 mb-2 ${textAutoHide ? "text-clamp-2" : ""}`}>
-                        {note.frontmatter.description}
+                        {card.description}
                       </p>
-                    )}
-                    {note.frontmatter.tags && note.frontmatter.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-auto">
-                        {note.frontmatter.tags.slice(0, 4).map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-white/10 text-white text-xs rounded-full border border-white/20"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
                     )}
                   </div>
                 </ParticleCard>
