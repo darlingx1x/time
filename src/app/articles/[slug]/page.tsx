@@ -45,55 +45,46 @@ export default async function ArticlePage({ params }: Props) {
     notFound();
   }
 
-  // Отладочная информация
-  console.log('=== ARTICLE PAGE DEBUG ===');
-  console.log('Slug:', params.slug);
-  console.log('Note:', { 
-    title: note.title, 
-    updatedAt: note.updatedAt,
-    contentLength: note.content?.length,
-    frontmatter: note.frontmatter 
-  });
-  console.log('==========================');
-
   return (
-    <div className="min-h-screen bg-primary p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="neumorph-soft p-8">
-          {/* Навигация */}
-          <div className="mb-6">
-            <Link 
-              href="/articles"
-              className="btn-neumorph inline-flex items-center gap-2"
-            >
+    <div className="min-h-screen bg-ross-gradient section-padding font-inter">
+      {/* Header */}
+      <header className="header-main max-w-7xl mx-auto mb-8">
+        <div className="header-logo">
+          <span>🖌️</span>
+          Pallet Ross
+        </div>
+        <nav className="header-nav">
+          <Link href="/">Главная</Link>
+          <Link href="/articles">Статьи</Link>
+          <a href="#create">Create strategy</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#contact">Contact</a>
+          <a href="#solution">Solution</a>
+          <a href="#ecommerce">E-Commerce</a>
+        </nav>
+      </header>
+
+      <main className="max-w-3xl mx-auto w-full">
+        <div className="bento-card mb-8">
+          {/* Навигация и кнопки */}
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            <Link href="/articles" className="btn-neumorph inline-flex items-center gap-2">
               ← Назад к статьям
             </Link>
+            <div className="ml-auto"><ArticleRefreshButton slug={params.slug} /></div>
           </div>
 
-          {/* Заголовок */}
+          {/* Заголовок и мета */}
           <header className="mb-8">
-            <h1 className="text-4xl font-bold text-text mb-4">
-              {note.title}
-            </h1>
-            
-            <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
-              <span>
-                Опубликовано: {new Date(note.createdAt).toLocaleDateString('ru-RU')}
-              </span>
-              <span>
-                Обновлено: {new Date(note.updatedAt).toLocaleDateString('ru-RU')}
-              </span>
+            <h1 className="font-bold text-4xl mb-4" style={{fontFamily:'Inter,sans-serif'}}>{note.title}</h1>
+            <div className="flex flex-wrap items-center gap-4 text-secondary text-sm mb-2">
+              <span>Опубликовано: {new Date(note.createdAt).toLocaleDateString('ru-RU')}</span>
+              <span>Обновлено: {new Date(note.updatedAt).toLocaleDateString('ru-RU')}</span>
             </div>
-
             {note.frontmatter.tags && note.frontmatter.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {note.frontmatter.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 bg-accent/10 text-accent text-sm rounded-full"
-                  >
-                    {tag}
-                  </span>
+                  <span key={tag} className="tag-pill">{tag}</span>
                 ))}
               </div>
             )}
@@ -101,35 +92,30 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Описание */}
           {note.frontmatter.description && (
-            <div className="mb-8 p-4 bg-gray-100 rounded-lg">
-              <p className="text-gray-600 italic">
-                {note.frontmatter.description}
-              </p>
+            <div className="mb-8 p-4 bg-gray-100 rounded-xl">
+              <p className="text-gray-600 italic">{note.frontmatter.description}</p>
             </div>
           )}
 
           {/* Контент */}
-          <article className="prose prose-lg max-w-none">
-            <div 
-              className="markdown-content"
-              dangerouslySetInnerHTML={{ __html: note.html || '' }}
-            />
+          <article className="markdown-content prose-lg max-w-none">
+            <div dangerouslySetInnerHTML={{ __html: note.html || '' }} />
           </article>
-
-          {/* Отладочная информация */}
-          <div className="mt-8 p-4 bg-yellow-100 rounded-lg text-sm">
-            <p><strong>Отладка статьи:</strong></p>
-            <p>Slug: {params.slug}</p>
-            <p>Заголовок: {note.title}</p>
-            <p>Обновлено: {new Date(note.updatedAt).toLocaleString('ru-RU')}</p>
-            <p>Длина контента: {note.content?.length} символов</p>
-            <p>Frontmatter: {JSON.stringify(note.frontmatter, null, 2)}</p>
-            <p className="mt-2">
-              <ArticleRefreshButton slug={params.slug} />
-            </p>
-          </div>
         </div>
-      </div>
+
+        {/* Debug info */}
+        <div className="mt-8 p-4 bg-yellow-100 rounded-lg text-sm">
+          <p><strong>Отладка статьи:</strong></p>
+          <p>Slug: {params.slug}</p>
+          <p>Заголовок: {note.title}</p>
+          <p>Обновлено: {new Date(note.updatedAt).toLocaleString('ru-RU')}</p>
+          <p>Длина контента: {note.content?.length} символов</p>
+          <p>Frontmatter: {JSON.stringify(note.frontmatter, null, 2)}</p>
+          <p className="mt-2">
+            <ArticleRefreshButton slug={params.slug} />
+          </p>
+        </div>
+      </main>
     </div>
   );
 } 

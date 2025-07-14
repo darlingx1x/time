@@ -13,16 +13,15 @@ module.exports = {
         neumorphInset: 'inset 8px 8px 16px #d1d9e6, inset -8px -8px 16px #ffffff',
         neumorphSoft: '4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff',
         neumorphActive: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff',
+        softMd: '0 4px 24px 0 rgba(80, 80, 120, 0.08)',
       },
       colors: {
-        primary: '#f2f3f5',
-        accent: '#4f46e5',
-        card: '#f7f8fa',
-        text: '#2e2e2e',
-        sidebar: '#e0e5ec',
-        topbar: '#f2f3f5',
-        border: '#e3e6ed',
-        danger: '#ef4444',
+        primary: '#f5f7fa',
+        accent: '#6366f1',
+        secondary: '#6b7280',
+        highlight: '#facc15',
+        card: '#fff',
+        text: '#000',
         gray: {
           100: '#f3f4f6',
           200: '#e5e7eb',
@@ -32,10 +31,30 @@ module.exports = {
         },
       },
       borderRadius: {
-        neumorph: '1.5rem',
+        '2xl': '1.5rem',
+        xl: '1rem',
+        bento: '2rem',
         card: '1.25rem',
-        button: '1rem',
-        input: '0.75rem',
+        button: '9999px',
+      },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+      },
+      fontSize: {
+        heading: '3rem', // ~text-5xl
+        subheading: '1.125rem', // ~text-lg
+        body: '0.95rem', // ~text-sm
+      },
+      spacing: {
+        section: '5rem', // py-20
+        cardgap: '1rem', // gap-4
+      },
+      maxWidth: {
+        '7xl': '80rem',
+        xl: '48rem',
+      },
+      backgroundImage: {
+        'ross-gradient': 'linear-gradient(135deg, #f5f7fa 0%, #e8ebf0 100%)',
       },
       transitionProperty: {
         'neumorph': 'box-shadow, background, color',
